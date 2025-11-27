@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './App.css'
 import { Banner } from './components/Banner';
 import { CardEvento } from './components/CardEvento';
@@ -10,6 +11,7 @@ import { Tema } from './components/Tema';
 // props.children
 
 function App() {
+
 	const temas = [
 		{
 			id: 1,
@@ -37,14 +39,20 @@ function App() {
 		},
 	];
 
-	const eventos = [
+	const [eventos, setEventos] = useState([
 		{
 			capa: 'https://raw.githubusercontent.com/viniciosneves/tecboard-assets/refs/heads/main/imagem_1.png',
 			tema: temas[0],
 			data: new Date(),
 			titulo: 'Mulheres no Front'
 		}
-	]
+	]);
+
+	function adicionarEvento(evento) {
+		setEventos([...eventos, evento]);
+		// eventos.push(evento);
+		// console.log('eventos=>', eventos);
+	}
 
 	return (
 		<main>
@@ -52,15 +60,29 @@ function App() {
 				<img src="/logo.png" alt="logo" />
 			</header>
 			<Banner />
-			<FormularioDeEvento />
-			{temas.map(function (item) {
-				return (
-					<section key={item.id}>
-						<Tema tema={item}/>
-						<CardEvento evento={eventos[0]} />
-					</section>
-				)
-			})}
+			<FormularioDeEvento temas={temas} onSubmit={adicionarEvento} />
+			<section className='container'>
+				{temas.map(function (tema) {
+					if (!eventos.some(function(evento) {
+						return evento.tema.id == tema.id;
+					})) {
+						return null;
+					}
+					return (
+						<section key={tema.id}>
+							<Tema tema={tema} />
+							<div className="eventos">
+								{eventos.filter(function (evento) {
+									return evento.tema.id == tema.id;
+								}).map(function (evento, index) {
+									return <CardEvento evento={evento} key={index} />
+								})}
+
+							</div>
+						</section>
+					)
+				})}
+			</section>
 		</main>
 	)
 }

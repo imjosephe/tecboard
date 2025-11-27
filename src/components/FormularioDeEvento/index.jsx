@@ -6,9 +6,22 @@ import { TituloFormulario } from "../TituloFormulario";
 import { Botao } from '../Botao';
 import { ListaSuspensa } from '../ListaSuspensa';
 
-export function FormularioDeEvento() {
-	return(
-		<form className="form-evento">
+export function FormularioDeEvento({ temas, onSubmit }) {
+	function onFormSubmit(formData) {
+		const evento =
+		{
+			capa: formData.get('capa'),
+			tema: temas.find(function (item) {
+				return item.id == formData.get('tema')
+			}),
+			data: new Date(formData.get('dataEvento')),
+			titulo: formData.get('nomeEvento')
+		};
+		onSubmit(evento);
+	}
+
+	return (
+		<form className="form-evento" action={onFormSubmit}>
 			<TituloFormulario>
 				Preencha para criar um evento:
 			</TituloFormulario>
@@ -17,19 +30,25 @@ export function FormularioDeEvento() {
 					<Label htmlFor="nome">
 						Qual o nome do evento?
 					</Label>
-					<CampoDeEntrada type="text" id="nome" placeholder="Summer dev hits" name="nome-evento"/>
+					<CampoDeEntrada type="text" id="nome" placeholder="Summer dev hits" name="nomeEvento" />
+				</CampoDeFormulario>
+				<CampoDeFormulario>
+					<Label htmlFor="capa">
+						Qual o endereço da imagem de capa?
+					</Label>
+					<CampoDeEntrada type="text" id="capa" placeholder="https://..." name="capa" />
 				</CampoDeFormulario>
 				<CampoDeFormulario>
 					<Label htmlFor="dataEvento">
 						Data do evento
 					</Label>
-					<CampoDeEntrada type="date" id="dataEvento" name="data-evento"/>
+					<CampoDeEntrada type="date" id="dataEvento" name="dataEvento" />
 				</CampoDeFormulario>
 				<CampoDeFormulario>
-					<Label htmlFor="dataEvento">
+					<Label htmlFor="tema">
 						Tema do evento
 					</Label>
-					<ListaSuspensa type="date" id="dataEvento" name="data-evento"/>
+					<ListaSuspensa id="tema" name="tema" items={temas} />
 				</CampoDeFormulario>
 			</div>
 			<div className='acoes'>
